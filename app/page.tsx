@@ -19,106 +19,6 @@ export default function App() {
     }, 600); // Match the flip duration
   }
 
-  const TarotCardReveal = () => {
-    return (
-      <motion.div
-        className="perspective-1000"
-        animate={{
-          // y: 0,
-          scale: 1,
-        }}
-        transition={{
-          type: "spring",
-          damping: 25,
-          stiffness: 200,
-          duration: 0.8,
-        }}
-        layout
-      >
-        {/* Card Flip Container */}
-        <motion.div
-          className="relative preserve-3d cursor-pointer"
-          animate={{
-            rotateY: isFlipped ? 180 : 0,
-            y: isCardClicked ? -36 : 0,
-          }}
-          transition={{ duration: 1, ease: "easeInOut" }}
-          onClick={onCardClick}
-          style={{
-            transformStyle: "preserve-3d",
-          }}
-        // layout
-        >
-          {/* Card Back (initial side) */}
-          <motion.div
-            className="absolute inset-0 backface-hidden"
-            initial={{
-              width: 200,
-              height: 360,
-            }}
-            animate={{
-              width: isCardClicked ? 240 : 200, // 80% of container approximation
-              height: isCardClicked ? 432 : 360,
-            }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            style={{
-              backfaceVisibility: "hidden",
-            }}
-          // layout
-          >
-            <div
-              className="w-full h-full bg-gradient-to-br from-purple-600 via-blue-600 to-purple-800 rounded-2xl shadow-2xl flex items-center justify-center border-4 border-yellow-400"
-              style={{
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-              }}
-            >
-              <div className="text-center text-white">
-                <div className="text-4xl mb-2">🌙</div>
-                <div className="text-lg font-bold">TAROT</div>
-                <div className="text-sm">Click to reveal</div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Card Front (revealed side) */}
-          <motion.div
-            className="backface-hidden"
-            initial={{
-              width: 200,
-              height: 360,
-            }}
-            animate={{
-              width: isCardClicked ? 240 : 200,
-              height: isCardClicked ? 432 : 360,
-            }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            style={{
-              backfaceVisibility: "hidden",
-              transform: "rotateY(180deg)",
-            }}
-          // layout
-          >
-            <div className="w-full h-full bg-gradient-to-br from-yellow-400 via-orange-400 to-red-400 rounded-2xl shadow-2xl flex items-center justify-center border-4 border-purple-600 relative overflow-hidden">
-              {/* Mystical background pattern */}
-              <div className="absolute inset-0 opacity-20">
-                <div className="absolute top-4 left-4 text-2xl">⭐</div>
-                <div className="absolute top-4 right-4 text-2xl">🌟</div>
-                <div className="absolute bottom-4 left-4 text-2xl">✨</div>
-                <div className="absolute bottom-4 right-4 text-2xl">💫</div>
-              </div>
-
-              <div className="text-center text-white z-10">
-                <div className="text-6xl mb-4">🔮</div>
-                <div className="text-xl font-bold mb-2">The Mystic</div>
-                <div className="text-sm">Your card is revealed</div>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-      </motion.div>
-    );
-  };
-
   return (
     <div className="flex flex-col min-h-screen font-sans text-[var(--app-foreground)] mini-app-theme from-[var(--app-background)] to-[var(--app-gray)]">
       <div className="w-full max-w-md mx-auto px-4 py-3">
@@ -140,12 +40,107 @@ export default function App() {
               </motion.div>
             )}
 
-            <TarotCardReveal />
 
+            {/* Card Container */}
+            <motion.div
+              className="perspective-1000"
+              animate={{
+                // y: 0,
+                scale: 1,
+              }}
+              transition={{
+                type: "spring",
+                damping: 25,
+                stiffness: 200,
+                duration: 0.8,
+              }}
+              layout
+            >
+              {/* Card Flip Container */}
+              <motion.div
+                className="relative preserve-3d cursor-pointer"
+                animate={{
+                  rotateY: isFlipped ? 180 : 0,
+                  y: isCardClicked ? -36 : 0,
+                }}
+                transition={{ duration: 1, ease: "easeInOut" }}
+                onClick={onCardClick}
+                style={{
+                  transformStyle: "preserve-3d",
+                }}
+              // layout
+              >
+                {/* Card Back (initial side) */}
+                <motion.div
+                  className="absolute inset-0 backface-hidden"
+                  initial={{
+                    width: 200,
+                    height: 360,
+                  }}
+                  animate={{
+                    width: isCardClicked ? 240 : 200, // 80% of container approximation
+                    height: isCardClicked ? 432 : 360,
+                  }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  style={{
+                    backfaceVisibility: "hidden",
+                  }}
+                // layout
+                >
+                  <div
+                    className="w-full h-full bg-gradient-to-br from-purple-600 via-blue-600 to-purple-800 rounded-2xl shadow-2xl flex items-center justify-center border-4 border-yellow-400"
+                    style={{
+                      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    }}
+                  >
+                    <div className="text-center text-white">
+                      <div className="text-4xl mb-2">🌙</div>
+                      <div className="text-lg font-bold">TAROT</div>
+                      <div className="text-sm">Click to reveal</div>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Card Front (revealed side) */}
+                <motion.div
+                  className="backface-hidden"
+                  initial={{
+                    width: 200,
+                    height: 360,
+                  }}
+                  animate={{
+                    width: isCardClicked ? 240 : 200,
+                    height: isCardClicked ? 432 : 360,
+                  }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  style={{
+                    backfaceVisibility: "hidden",
+                    transform: "rotateY(180deg)",
+                  }}
+                // layout
+                >
+                  <div className="w-full h-full bg-gradient-to-br from-yellow-400 via-orange-400 to-red-400 rounded-2xl shadow-2xl flex items-center justify-center border-4 border-purple-600 relative overflow-hidden">
+                    {/* Mystical background pattern */}
+                    <div className="absolute inset-0 opacity-20">
+                      <div className="absolute top-4 left-4 text-2xl">⭐</div>
+                      <div className="absolute top-4 right-4 text-2xl">🌟</div>
+                      <div className="absolute bottom-4 left-4 text-2xl">✨</div>
+                      <div className="absolute bottom-4 right-4 text-2xl">💫</div>
+                    </div>
+
+                    <div className="text-center text-white z-10">
+                      <div className="text-6xl mb-4">🔮</div>
+                      <div className="text-xl font-bold mb-2">The Mystic</div>
+                      <div className="text-sm">Your card is revealed</div>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            </motion.div>
           </AnimatePresence>
 
-          {/* Content that appears after card flip */}
           <AnimatePresence>
+            {/* Content that appears after card flip */}
             {isCardClicked && (
               <motion.div
                 initial={{ opacity: 0, y: 50 }}
