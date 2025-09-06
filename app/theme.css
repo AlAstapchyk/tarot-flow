@@ -4,7 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* :root {
   --app-background: #ffffff;
   --app-foreground: #111111;
   --app-foreground-muted: #58585c;
@@ -32,7 +32,7 @@
     --app-card-bg: rgba(17, 17, 17, 0.4);
     --app-card-border: rgba(115, 115, 115, 0.5);
   }
-}
+} */
 
 .mini-app-theme {
   --ock-font-family: "Geist", sans-serif;
