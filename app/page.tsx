@@ -7,6 +7,7 @@ import { pay } from '@base-org/account';
 import Image from "next/image";
 import { ExpressionSvg, MeditationSvg, YogaSvg } from "@/lib/svgs";
 import { cardInfos } from "@/lib/card-info";
+import Link from "next/link";
 
 const AUTHOR_ADDRESS = "0x6DFbC8dBCF4b96130536EE234AcD79Cd4064Ef3C";
 
@@ -33,6 +34,7 @@ export default function App() {
   const [cardSrc, setCardSrc] = useState<string | null>(null);
   const [isCardReversed, setIsCardReversed] = useState<boolean>(false);
   const [isImagePreloaded, setIsImagePreloaded] = useState(false);
+  const [unlockPack, setUnlockPack] = useState([false, false, false])
 
   // Preload the card image on component mount
   useEffect(() => {
@@ -72,7 +74,7 @@ export default function App() {
         top: 0,
         behavior: "smooth"
       });
-    }, 1000);
+    }, 1200);
   }
 
   const handleSubscription = async () => {
@@ -89,42 +91,50 @@ export default function App() {
   }
 
   const handleExpressionPayment = async () => {
-    try {
-      const payment = await pay({
-        amount: '1.00',
-        to: AUTHOR_ADDRESS,
-        testnet: true
-      }) as any;
-      console.log('Payment sent:', payment)
-    } catch (error) {
-      console.error('Payment failed:', error)
-    }
+    // try {
+    //   const payment = await pay({
+    //     amount: '1.00',
+    //     to: AUTHOR_ADDRESS,
+    //     testnet: true
+    //   }) as any;
+    //   console.log('Payment sent:', payment);
+    //   setUnlockPack([true, unlockPack[1], unlockPack[2]]);
+    // } catch (error) {
+    //   console.error('Payment failed:', error)
+    // }
+    setUnlockPack([true, unlockPack[1], unlockPack[2]]);
   }
 
   const handleYogaPayment = async () => {
-    try {
-      const payment = await pay({
-        amount: '3.00',
-        to: AUTHOR_ADDRESS,
-        testnet: true
-      }) as any;
-      console.log('Payment sent:', payment)
-    } catch (error) {
-      console.error('Payment failed:', error)
-    }
+    // try {
+    //   const payment = await pay({
+    //     amount: '3.00',
+    //     to: AUTHOR_ADDRESS,
+    //     testnet: true
+    //   }) as any;
+    //   console.log('Payment sent:', payment)
+    //   setUnlockPack([unlockPack[0], true, unlockPack[2]]);
+    // } catch (error) {
+    //   console.error('Payment failed:', error)
+    // }
+
+    setUnlockPack([unlockPack[0], true, unlockPack[2]]);
   }
 
   const handleMeditationPayment = async () => {
-    try {
-      const payment = await pay({
-        amount: '2.00',
-        to: AUTHOR_ADDRESS,
-        testnet: true
-      }) as any;
-      console.log('Payment sent:', payment)
-    } catch (error) {
-      console.error('Payment failed:', error)
-    }
+    // try {
+    //   const payment = await pay({
+    //     amount: '2.00',
+    //     to: AUTHOR_ADDRESS,
+    //     testnet: true
+    //   }) as any;
+    //   console.log('Payment sent:', payment)
+    //   setUnlockPack([unlockPack[0], unlockPack[1], true]);
+    // } catch (error) {
+    //   console.error('Payment failed:', error)
+    // }
+
+    setUnlockPack([unlockPack[0], unlockPack[1], true]);
   }
 
   const paymentOptions = [
@@ -166,12 +176,12 @@ export default function App() {
                 key="welcome-text"
                 initial={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -40 }} // move UP
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.7 }}
                 className=""
               >
-                <div className="relative w-full w-full h-[720px] overflow-hidden">
+                <div className="relative w-full h-[560px] overflow-hidden rounded-2xl">
                   <iframe
-                    className="absolute top-1/2 left-1/2 w-[177.78%] h-[177.78%] -translate-x-1/2 -translate-y-1/2 object-cover pointer-events-none"
+                    className="absolute top-1/2 left-1/2 w-[150%] h-[150%] -translate-x-1/2 -translate-y-1/2 object-cover pointer-events-none"
                     src="https://www.youtube.com/embed/k5pvKPD_9fc?autoplay=1&mute=1&loop=1&controls=0&playlist=k5pvKPD_9fc&modestbranding=1&rel=0&iv_load_policy=3&showinfo=0"
                     frameBorder="0"
                     allow="autoplay;"
@@ -315,23 +325,42 @@ export default function App() {
                   transition={{ delay: 2.0, duration: 0.6 }}
                 >
                   {paymentOptions.map((opt, index) => (
-                    <motion.div
-                      key={opt.id}
-                      className="flex flex-col w-fit mx-auto items-center justify-center p-4 border-2 border-white rounded-2xl aspect-square bg-color-2 transition-colors cursor-pointer shadow-md"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 2.2 + index * 0.1, duration: 0.4 }}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={opt.handler}
-                    >
-                      <p className="text-base">{opt.label}</p>
-                      <p className="font-extralight text-base">{opt.describtion}</p>
-                      <div className="w-40 h-40 bg-gradient-to-br rounded-full flex items-center justify-center text-2xl">
-                        {opt.svg({ className: "w-64 h-64" })}
-                      </div>
-                      <span className="font-semibold text-base mt-4">{opt.price} USDC</span>
-                    </motion.div>
+                    <>
+                      <motion.div
+                        key={opt.id}
+                        className="flex flex-col w-fit mx-auto items-center justify-center p-4 border-2 border-white rounded-2xl aspect-square bg-color-2 transition-colors cursor-pointer shadow-md"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 2.2 + index * 0.1, duration: 0.4 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={opt.handler}
+                      >
+                        <p className="text-base">{opt.label}</p>
+                        <p className="font-extralight text-base">{opt.describtion}</p>
+                        <div className="w-40 h-40 bg-gradient-to-br rounded-full flex items-center justify-center text-2xl">
+                          {opt.svg({ className: "w-64 h-64" })}
+                        </div>
+                        <span className="font-semibold text-base mt-4">{opt.price} USDC</span>
+                      </motion.div>
+                      {unlockPack[0] && opt.id === 1 &&
+                        <div className="whitespace-pre-line">
+                          {isCardReversed ? cardInfos[randomIndex].questionsReversed : cardInfos[randomIndex].questions}
+                        </div>
+                      }
+                      {unlockPack[1] && opt.id === 2 &&
+                        <div className="flex flex-col gap-4">
+                          <Link href="https://www.youtube.com/watch?v=jIAVbt3bXBc"><img src="/thumbnail1.png" className="w-full rounded-2xl"></img></Link>
+                          <Link href="https://www.youtube.com/watch?v=xuPJt8Ojxeg"><img src="/thumbnail2.png" className="w-full rounded-2xl"></img></Link>
+                        </div>
+                      }
+                      {unlockPack[2] && opt.id === 3 && (
+                        <div className="flex flex-col gap-4">
+                          <img src="/audio-preview-1.png" className="w-2/3 rounded-2xl mx-auto"></img>
+                          <img src="/audio-preview-2.png" className="w-2/3 rounded-2xl mx-auto"></img>
+                        </div>
+                      )}
+                    </>
                   ))}
                 </motion.div>
 

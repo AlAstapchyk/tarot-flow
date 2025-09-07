@@ -9,7 +9,7 @@ const Header = () => {
     );
 
     return (
-        <header className="flex justify-between items-center mb-3">
+        <header className="flex justify-between items-center">
             <LogoSvg />
             <div className="flex items-center ml-auto bg-[--color-3] rounded-2xl">
                 <Wallet className="z-10 text-[color-1]">
