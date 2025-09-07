@@ -3,6 +3,38 @@ import "@coinbase/onchainkit/styles.css";
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
+// import { Shantell_Sans } from 'next/font/google';
+import localFont from "next/font/local";
+import Footer from "@/components/Footer";
+
+
+// export const delius = Shantell_Sans({
+//   subsets: ['latin'],
+//   weight: ['300', '400', '500', '600', '700', '800',], // add the required weight property
+//   variable: '--font-shantell-sans',
+//   display: 'swap',
+// });
+
+const hatton = localFont({
+  src: [
+    {
+      path: "../lib/fonts/PP-Hatton-Ultralight-200.otf",
+      weight: "200",
+      style: "normal",
+    },
+    {
+      path: "../lib/fonts/PP-Hatton-Medium-500.otf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../lib/fonts/PP-Hatton-Bold-700.otf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-hatton",
+});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -42,8 +74,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-background">
-        <Providers>{children}</Providers>
+      <body className={`bg-background ${hatton.className} font-[400]`}>
+        <Providers>
+          {children}
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

@@ -2,48 +2,155 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Header from "@/components/Header";
+import { pay } from '@base-org/account';
+import Image from "next/image";
+import { ExpressionSvg, MeditationSvg, YogaSvg } from "@/lib/svgs";
+
+const AUTHOR_ADDRESS = "0x6DFbC8dBCF4b96130536EE234AcD79Cd4064Ef3C";
+
+function getRandomCardSrc(): string {
+  const totalCards = 22;
+  const randomIndex = Math.floor(Math.random() * totalCards) + 1;
+  return `/cards/${randomIndex}.png`;
+}
 
 export default function App() {
   const [isCardClicked, setIsCardClicked] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [cardSrc, setCardSrc] = useState<string | null>(null);
+  const [isCardReversed, setIsCardReversed] = useState<boolean>(false);
 
   async function onCardClick() {
     if (isCardClicked) return; // Prevent multiple clicks
 
     // Start the flip animation
     setIsFlipped(true);
+    if (!cardSrc) {
+      setCardSrc(getRandomCardSrc());
+      setIsCardReversed(Math.random() < 0.5);
+    }
 
     // After flip animation completes, show the content
     setTimeout(() => {
       setIsCardClicked(true);
     }, 600); // Match the flip duration
+
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }, 1000)
   }
 
+  const handleSubscription = async () => {
+    try {
+      const payment = await pay({
+        amount: '20.00',
+        to: AUTHOR_ADDRESS,
+        testnet: true
+      }) as any;
+      console.log('Payment sent:', payment)
+    } catch (error) {
+      console.error('Payment failed:', error)
+    }
+  }
+
+  const handleExpressionPayment = async () => {
+    try {
+      const payment = await pay({
+        amount: '1.00',
+        to: AUTHOR_ADDRESS,
+        testnet: true
+      }) as any;
+      console.log('Payment sent:', payment)
+    } catch (error) {
+      console.error('Payment failed:', error)
+    }
+  }
+
+  const handleYogaPayment = async () => {
+    try {
+      const payment = await pay({
+        amount: '3.00',
+        to: AUTHOR_ADDRESS,
+        testnet: true
+      }) as any;
+      console.log('Payment sent:', payment)
+    } catch (error) {
+      console.error('Payment failed:', error)
+    }
+  }
+
+  const handleMeditationPayment = async () => {
+    try {
+      const payment = await pay({
+        amount: '2.00',
+        to: AUTHOR_ADDRESS,
+        testnet: true
+      }) as any;
+      console.log('Payment sent:', payment)
+    } catch (error) {
+      console.error('Payment failed:', error)
+    }
+  }
+
+  const paymentOptions = [
+    {
+      id: 1,
+      label: "Tarot Expression",
+      describtion: "your daily journal",
+      svg: ExpressionSvg,
+      price: 1,
+      handler: handleExpressionPayment,
+    },
+    {
+      id: 2,
+      label: "Tarot Yoga",
+      describtion: "your daily Asana",
+      svg: YogaSvg,
+      price: 3,
+      handler: handleYogaPayment,
+    },
+    {
+      id: 3,
+      label: "Tarot Meditation",
+      describtion: "be guided within",
+      svg: MeditationSvg,
+      price: 2,
+      handler: handleMeditationPayment,
+    },
+  ];
+
   return (
-    <div className="flex flex-col min-h-screen font-sans text-[var(--app-foreground)] mini-app-theme from-[var(--app-background)] to-[var(--app-gray)]">
+    <div className="flex flex-col min-h-screen text-[var(--app-foreground)] mini-app-theme from-[var(--app-background)] to-[var(--app-gray)]">
       <div className="w-full max-w-md mx-auto px-4 py-3">
+        <Header />
         <main className="flex-1 pt-8 items-center flex flex-col text-center relative">
+
           <AnimatePresence>
             {!isCardClicked && (
               <motion.div
                 key="welcome-text"
                 initial={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }} // move UP
+                exit={{ opacity: 0, y: -40 }} // move UP
                 transition={{ duration: 0.5 }}
-                className="mb-8"
+                className=""
               >
-                <p className="mb-8 text-3xl">
-                  Welcome to your daily <span className="bg-yellow-300">Tarot flow</span> practice
+                <Image width={240} height={240} alt="Circular Logo" src={"/circle-logo.png"} className="mx-auto" />
+
+                <p className="mb-8 text-xl">
+                  Welcome to your daily TarotFlow practice
                 </p>
-                <p className="mb-8 text-2xl">Start by taking a breath ...</p>
-                <p className="mb-8 text-xl">Then click to draw your card</p>
+                <p className="mb-8 text-lg">Start by taking a breath ...</p>
+                <p className="">Then click to draw your card</p>
               </motion.div>
             )}
 
-
             {/* Card Container */}
             <motion.div
-              className="perspective-1000"
+              className="perspective-1000 mt-8"
               animate={{
                 // y: 0,
                 scale: 1,
@@ -52,7 +159,7 @@ export default function App() {
                 type: "spring",
                 damping: 25,
                 stiffness: 200,
-                duration: 0.8,
+                duration: 2,
               }}
               layout
             >
@@ -68,72 +175,44 @@ export default function App() {
                 style={{
                   transformStyle: "preserve-3d",
                 }}
-              // layout
               >
                 {/* Card Back (initial side) */}
                 <motion.div
-                  className="absolute inset-0 backface-hidden"
+                  className="absolute inset-0 backface-hidden mb-12"
                   initial={{
-                    width: 200,
+                    width: 240,
                     height: 360,
                   }}
                   animate={{
-                    width: isCardClicked ? 240 : 200, // 80% of container approximation
-                    height: isCardClicked ? 432 : 360,
+                    width: isCardClicked ? 300 : 240,
+                    height: isCardClicked ? 450 : 360,
                   }}
                   transition={{ duration: 1, ease: "easeOut" }}
                   style={{
                     backfaceVisibility: "hidden",
                   }}
-                // layout
                 >
-                  <div
-                    className="w-full h-full bg-gradient-to-br from-purple-600 via-blue-600 to-purple-800 rounded-2xl shadow-2xl flex items-center justify-center border-4 border-yellow-400"
-                    style={{
-                      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                    }}
-                  >
-                    <div className="text-center text-white">
-                      <div className="text-4xl mb-2">🌙</div>
-                      <div className="text-lg font-bold">TAROT</div>
-                      <div className="text-sm">Click to reveal</div>
-                    </div>
-                  </div>
+                  <Image className="rounded-2xl" alt="Back side of card" fill src={"/cards/back-side.png"}></Image>
                 </motion.div>
 
                 {/* Card Front (revealed side) */}
                 <motion.div
                   className="backface-hidden"
                   initial={{
-                    width: 200,
+                    width: 240,
                     height: 360,
                   }}
                   animate={{
-                    width: isCardClicked ? 240 : 200,
-                    height: isCardClicked ? 432 : 360,
+                    width: isCardClicked ? 300 : 240,
+                    height: isCardClicked ? 450 : 360,
                   }}
                   transition={{ duration: 1, ease: "easeOut" }}
                   style={{
                     backfaceVisibility: "hidden",
-                    transform: "rotateY(180deg)",
+                    transform: `rotateY(180deg) rotateZ(${isCardReversed ? 180 : 0}deg)`
                   }}
-                // layout
                 >
-                  <div className="w-full h-full bg-gradient-to-br from-yellow-400 via-orange-400 to-red-400 rounded-2xl shadow-2xl flex items-center justify-center border-4 border-purple-600 relative overflow-hidden">
-                    {/* Mystical background pattern */}
-                    <div className="absolute inset-0 opacity-20">
-                      <div className="absolute top-4 left-4 text-2xl">⭐</div>
-                      <div className="absolute top-4 right-4 text-2xl">🌟</div>
-                      <div className="absolute bottom-4 left-4 text-2xl">✨</div>
-                      <div className="absolute bottom-4 right-4 text-2xl">💫</div>
-                    </div>
-
-                    <div className="text-center text-white z-10">
-                      <div className="text-6xl mb-4">🔮</div>
-                      <div className="text-xl font-bold mb-2">The Mystic</div>
-                      <div className="text-sm">Your card is revealed</div>
-                    </div>
-                  </div>
+                  <Image className="rounded-3xl" alt="Front side of card" fill src={cardSrc ?? ""}></Image>
                 </motion.div>
               </motion.div>
             </motion.div>
@@ -173,41 +252,62 @@ export default function App() {
                   transition={{ delay: 1.6, duration: 0.5 }}
                 />
 
-                <motion.button
-                  className="border-2 border-white p-2 rounded-xl w-full hover:bg-white hover:text-black transition-colors"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.8, duration: 0.5 }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <p className="text-xl">Subscribe</p>
-                  <span>monthly $10</span>
-                </motion.button>
-
                 <motion.div
-                  className="grid grid-cols-3 gap-4 mt-8"
+                  className="flex flex-col gap-4 mt-8"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 2.0, duration: 0.6 }}
                 >
-                  {[1, 2, 3].map((price, index) => (
+                  {paymentOptions.map((opt, index) => (
                     <motion.div
-                      key={price}
-                      className="flex flex-col items-center justify-center p-4 border border-gray-300 rounded-lg hover:border-yellow-400 transition-colors cursor-pointer"
+                      key={opt.id}
+                      className="flex flex-col w-fit mx-auto items-center justify-center p-4 border-2 border-white rounded-2xl aspect-square bg-color-2 transition-colors cursor-pointer shadow-md"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 2.2 + index * 0.1, duration: 0.4 }}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
+                      onClick={opt.handler}
                     >
-                      <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-blue-400 rounded-full mb-2 flex items-center justify-center text-2xl">
-                        {index === 0 ? '🌙' : index === 1 ? '⭐' : '🔮'}
+                      <p className="text-base">{opt.label}</p>
+                      <p className="font-extralight text-base">{opt.describtion}</p>
+                      <div className="w-40 h-40 bg-gradient-to-br rounded-full flex items-center justify-center text-2xl">
+                        {opt.svg({ className: "w-64 h-64" })}
                       </div>
-                      <span className="font-semibold">${price}</span>
+                      <span className="font-semibold text-base mt-4">{opt.price} USDC</span>
                     </motion.div>
                   ))}
                 </motion.div>
+
+                <motion.p
+                  className="mt-16 text-base font-medium text-gray-700"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.6, duration: 0.5 }}
+                >
+                  Unlimited access
+                </motion.p>
+
+                <motion.p
+                  className="text-gray-500 mb-4"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.8, duration: 0.5 }}
+                >
+                  3 days free, then 20USDC/month
+                </motion.p>
+
+                <motion.button
+                  className="border-2 py-2 px-6 rounded-2xl mb-12 shadow-md w-fit hover:text-black transition-colors bg-color-3"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.8, duration: 0.5 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleSubscription}
+                >
+                  <p className="text-xl">Accept free trial</p>
+                </motion.button>
               </motion.div>
             )}
           </AnimatePresence>

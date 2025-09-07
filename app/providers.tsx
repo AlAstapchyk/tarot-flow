@@ -3,6 +3,11 @@
 import { type ReactNode } from "react";
 import { base } from "wagmi/chains";
 import { MiniKitProvider } from "@coinbase/onchainkit/minikit";
+import { WagmiProvider } from "wagmi";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { config } from '../config/wagmi'
+
+const queryClient = new QueryClient()
 
 export function Providers(props: { children: ReactNode }) {
   return (
@@ -18,7 +23,11 @@ export function Providers(props: { children: ReactNode }) {
         },
       }}
     >
-      {props.children}
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          {props.children}
+        </QueryClientProvider>
+      </WagmiProvider>
     </MiniKitProvider>
   );
 }

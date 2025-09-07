@@ -4,6 +4,9 @@
 
 :root {
   --background: #ebe5e4;
+  --color-1: #ebe5e4;
+  --color-2: #8ac2be;
+  --color-3: #c2b59b;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -16,7 +19,7 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: "Geist", sans-serif;
+  font-family: "Hatton", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;

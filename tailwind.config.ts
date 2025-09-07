@@ -11,6 +11,9 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        "color-1": "var(--color-1)",
+        "color-2": "var(--color-2)",
+        "color-3": "var(--color-3)",
       },
       animation: {
         "fade-out": "1s fadeOut 3s ease-out forwards",

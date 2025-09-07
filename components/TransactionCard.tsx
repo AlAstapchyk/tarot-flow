@@ -5,6 +5,7 @@ import { useMemo, useCallback } from "react";
 import { Transaction, TransactionButton, TransactionError, TransactionResponse, TransactionStatus, TransactionStatusAction, TransactionStatusLabel, TransactionToast, TransactionToastAction, TransactionToastIcon, TransactionToastLabel } from "@coinbase/onchainkit/transaction";
 import { useAccount } from "wagmi";
 import Card from "./Card";
+import { parseUnits } from "viem";
 
 export default function TransactionCard() {
     const { address } = useAccount();
@@ -15,7 +16,7 @@ export default function TransactionCard() {
             {
                 to: address,
                 data: "0x" as `0x${string}`,
-                value: BigInt(0),
+                value: parseUnits("10", 6),
             },
         ]
         : [], [address]);
