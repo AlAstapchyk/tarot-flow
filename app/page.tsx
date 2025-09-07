@@ -6,13 +6,14 @@ import Header from "@/components/Header";
 import { pay } from '@base-org/account';
 import Image from "next/image";
 import { ExpressionSvg, MeditationSvg, YogaSvg } from "@/lib/svgs";
+import { cardInfos } from "@/lib/card-info";
 
 const AUTHOR_ADDRESS = "0x6DFbC8dBCF4b96130536EE234AcD79Cd4064Ef3C";
 
-function getRandomCardSrc(): string {
+function getRandomIndex(): number {
   const totalCards = 22;
-  const randomIndex = Math.floor(Math.random() * totalCards) + 1;
-  return `/cards/${randomIndex}.png`;
+  const randomIndex = Math.floor(Math.random() * totalCards);
+  return randomIndex;
 }
 
 // Preload image utility
@@ -28,15 +29,18 @@ function preloadImage(src: string): Promise<void> {
 export default function App() {
   const [isCardClicked, setIsCardClicked] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [randomIndex, setRandomIndex] = useState<number>(0);
   const [cardSrc, setCardSrc] = useState<string | null>(null);
   const [isCardReversed, setIsCardReversed] = useState<boolean>(false);
   const [isImagePreloaded, setIsImagePreloaded] = useState(false);
 
   // Preload the card image on component mount
   useEffect(() => {
-    const selectedCardSrc = getRandomCardSrc();
+    const randomIndx = getRandomIndex()
+    const selectedCardSrc = `/cards/${randomIndx}.png`;
     const isReversed = Math.random() < 0.5;
 
+    setRandomIndex(randomIndx);
     setCardSrc(selectedCardSrc);
     setIsCardReversed(isReversed);
 
@@ -165,6 +169,16 @@ export default function App() {
                 transition={{ duration: 0.5 }}
                 className=""
               >
+                <div className="relative w-full w-full h-[720px] overflow-hidden">
+                  <iframe
+                    className="absolute top-1/2 left-1/2 w-[177.78%] h-[177.78%] -translate-x-1/2 -translate-y-1/2 object-cover pointer-events-none"
+                    src="https://www.youtube.com/embed/k5pvKPD_9fc?autoplay=1&mute=1&loop=1&controls=0&playlist=k5pvKPD_9fc&modestbranding=1&rel=0&iv_load_policy=3&showinfo=0"
+                    frameBorder="0"
+                    allow="autoplay;"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+
                 <Image width={240} height={240} alt="Circular Logo" src={"/circle-logo.png"} className="mx-auto" />
 
                 <p className="mb-8 text-xl">
@@ -269,7 +283,13 @@ export default function App() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1.2, duration: 0.5 }}
                 >
-                  Intuition, Mystery, Wisdom
+                  {(() => {
+                    const keywords = isCardReversed
+                      ? cardInfos[randomIndex].reversedKeywords
+                      : cardInfos[randomIndex].uprightKeywords;
+
+                    return keywords.charAt(0).toUpperCase() + keywords.slice(1);
+                  })()}
                 </motion.p>
 
                 <motion.p
@@ -278,7 +298,7 @@ export default function App() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1.4, duration: 0.5 }}
                 >
-                  Trust your inner voice and embrace the unknown. Your intuition will guide you through any uncertainty.
+                  {isCardReversed ? cardInfos[randomIndex].reversedMean : cardInfos[randomIndex].uprightMean}
                 </motion.p>
 
                 <motion.hr
