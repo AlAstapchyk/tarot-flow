@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/components/Header";
 import { pay } from '@base-org/account';
@@ -15,21 +15,48 @@ function getRandomCardSrc(): string {
   return `/cards/${randomIndex}.png`;
 }
 
+// Preload image utility
+function preloadImage(src: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const img = new window.Image();
+    img.onload = () => resolve();
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
 export default function App() {
   const [isCardClicked, setIsCardClicked] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
   const [cardSrc, setCardSrc] = useState<string | null>(null);
   const [isCardReversed, setIsCardReversed] = useState<boolean>(false);
+  const [isImagePreloaded, setIsImagePreloaded] = useState(false);
+
+  // Preload the card image on component mount
+  useEffect(() => {
+    const selectedCardSrc = getRandomCardSrc();
+    const isReversed = Math.random() < 0.5;
+
+    setCardSrc(selectedCardSrc);
+    setIsCardReversed(isReversed);
+
+    // Preload the image
+    preloadImage(selectedCardSrc)
+      .then(() => {
+        setIsImagePreloaded(true);
+      })
+      .catch((error) => {
+        console.error('Failed to preload image:', error);
+        // Still allow the animation to proceed even if preload fails
+        setIsImagePreloaded(true);
+      });
+  }, []);
 
   async function onCardClick() {
-    if (isCardClicked) return; // Prevent multiple clicks
+    if (isCardClicked || !isImagePreloaded) return; // Prevent multiple clicks and ensure image is loaded
 
     // Start the flip animation
     setIsFlipped(true);
-    if (!cardSrc) {
-      setCardSrc(getRandomCardSrc());
-      setIsCardReversed(Math.random() < 0.5);
-    }
 
     // After flip animation completes, show the content
     setTimeout(() => {
@@ -41,7 +68,7 @@ export default function App() {
         top: 0,
         behavior: "smooth"
       });
-    }, 1000)
+    }, 1000);
   }
 
   const handleSubscription = async () => {
@@ -152,7 +179,6 @@ export default function App() {
             <motion.div
               className="perspective-1000 mt-8"
               animate={{
-                // y: 0,
                 scale: 1,
               }}
               transition={{
@@ -165,7 +191,7 @@ export default function App() {
             >
               {/* Card Flip Container */}
               <motion.div
-                className="relative preserve-3d cursor-pointer"
+                className={`relative preserve-3d ${isImagePreloaded ? 'cursor-pointer' : 'cursor-wait'}`}
                 animate={{
                   rotateY: isFlipped ? 180 : 0,
                   y: isCardClicked ? -36 : 0,
@@ -178,7 +204,7 @@ export default function App() {
               >
                 {/* Card Back (initial side) */}
                 <motion.div
-                  className="absolute inset-0 backface-hidden mb-12"
+                  className={`absolute inset-0 backface-hidden mb-12 transition-all duration-200 ${isImagePreloaded ? "brightness-100" : "brightness-50"}`}
                   initial={{
                     width: 240,
                     height: 360,
@@ -195,7 +221,7 @@ export default function App() {
                   <Image className="rounded-2xl" alt="Back side of card" fill src={"/cards/back-side.png"}></Image>
                 </motion.div>
 
-                {/* Card Front (revealed side) */}
+                {/* Card Front (revealed side) - Now preloaded */}
                 <motion.div
                   className="backface-hidden"
                   initial={{
@@ -212,7 +238,17 @@ export default function App() {
                     transform: `rotateY(180deg) rotateZ(${isCardReversed ? 180 : 0}deg)`
                   }}
                 >
-                  <Image className="rounded-3xl" alt="Front side of card" fill src={cardSrc ?? ""}></Image>
+                  {cardSrc && (
+                    <Image
+                      className="rounded-3xl"
+                      alt="Front side of card"
+                      fill
+                      src={cardSrc}
+                      priority
+                      onLoad={() => setIsImagePreloaded(true)}
+                      onError={() => setIsImagePreloaded(true)}
+                    />
+                  )}
                 </motion.div>
               </motion.div>
             </motion.div>
